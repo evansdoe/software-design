@@ -1,0 +1,29 @@
+{
+    "name": "software-design",
+    "image": "mcr.microsoft.com/devcontainers/python:1-3.14-bookworm",
+    "features": {
+        "ghcr.io/va-h/devcontainers-features/uv:1": { "version": "latest" }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "charliermarsh.ruff",
+                "ms-python.python",
+                "tamasfe.even-better-toml",
+                "astral-sh.ty"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
+                "[python]": {
+                    "editor.defaultFormatter": "charliermarsh.ruff",
+                    "editor.formatOnSave": true,
+                    "editor.codeActionsOnSave": {
+                        "source.organizeImports": "explicit",
+                        "source.fixAll": "explicit"
+                    }
+                }
+            }
+        }
+    },
+    "postCreateCommand": "uv sync --all-packages --all-groups && (test -d .git && uv run pre-commit install || echo 'not a git repo yet, skipping pre-commit install')"
+}

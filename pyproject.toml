@@ -1,0 +1,51 @@
+
+# Virtual workspace root — this file defines shared tooling and the member list.
+# It is not itself a distributable package; each member under projects/ is.
+#
+# Members are wired in by the glob below, not by a dependency edge, so adding a
+# project needs no edit here. `uv sync` installs every member editable.
+
+[tool.uv.workspace]
+members = ["projects/*"]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[dependency-groups]
+dev = [
+    { include-group = "lint" },
+    { include-group = "test" },
+    { include-group = "docs" },
+    { include-group = "license" },
+    "poethepoet>=0.30",
+    "pre-commit>=4.0",
+]
+lint = [
+    "ruff>=0.9",
+    "ty>=0.0.1a1",
+]
+test = ["pytest>=8.3", "pytest-cov>=6.0"]
+docs = ["mkdocs-material>=9.5", "mkdocstrings[python]>=0.27"]
+license = ["licensecheck>=2024.3"]
+
+[tool.ty.src]
+include = ["projects"]
+exclude = ["projects/*/tests"]
+
+[tool.poe.tasks]
+fmt = "ruff format ."
+lint = "ruff check --fix ."
+"lint:check" = "ruff check ."
+"fmt:check" = "ruff format --check ."
+types = "ty check"
+test = "pytest"
+cov = "pytest --cov=projects --cov-report=term-missing --cov-report=xml"
+check = ["fmt:check", "lint:check", "types"]
+all = ["check", "test"]
+projects = "python scripts/ci/discover_projects.py --format list --all"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+# importlib import mode lets members reuse test file names.
+addopts = "-ra --strict-markers --strict-config --import-mode=importlib"
+testpaths = ["projects"]

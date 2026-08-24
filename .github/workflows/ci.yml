@@ -1,0 +1,116 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_VERSION: "latest"
+
+jobs:
+  # Lint, format and type checks run once over the whole workspace.
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+      - run: uv sync --no-default-groups --only-group lint
+      - run: uv run --no-sync ruff format --check .
+      - run: uv run --no-sync ruff check --output-format=github .
+
+  types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+      - run: uv sync --all-packages --no-default-groups --group lint
+      - run: uv run --no-sync ty check
+
+  # Which members were touched? Adding a project needs no edit to this file.
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.find.outputs.matrix }}
+      any: ${{ steps.find.outputs.any }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - id: find
+        run: |
+          REF="${{ github.base_ref || github.event.repository.default_branch }}"
+          git fetch --no-tags origin "$REF" || true
+          MATRIX=$(python scripts/ci/discover_projects.py --format github --base "origin/$REF")
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+          COUNT=$(printf '%s' "$MATRIX" | python -c 'import json,sys; print(len(json.load(sys.stdin)["project"]))')
+          if [ "$COUNT" = "0" ]; then echo "any=false" >> "$GITHUB_OUTPUT"; else echo "any=true" >> "$GITHUB_OUTPUT"; fi
+
+  test:
+    needs: [discover]
+    if: needs.discover.outputs.any == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.discover.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+      - name: Sync ${{ matrix.project }}
+        run: uv sync --package ${{ matrix.project }} --no-default-groups --group test
+      - name: Test ${{ matrix.project }}
+        run: |
+          uv run --no-sync pytest projects/${{ matrix.project }} \
+            --cov=projects/${{ matrix.project }} --cov-report=term-missing
+
+  licenses:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+      - run: uv sync --all-packages --no-default-groups --group license
+      - run: uv run --no-sync licensecheck
+
+  danger:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          package-manager-cache: false
+          cache: pnpm
+          cache-dependency-path: scripts/danger/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+        working-directory: scripts/danger
+      - run: pnpm lint
+        working-directory: scripts/danger
+      - run: pnpm format
+        working-directory: scripts/danger
+      - run: pnpm danger ci --failOnErrors
+        working-directory: scripts/danger
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

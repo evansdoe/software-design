@@ -1,0 +1,34 @@
+{
+  "template": "git@github.com:evansdoe/python-templates.git",
+  "commit": "9caecd643cdffb7608a55987c93457fa5a591d34",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "full_name": "Evans Doe Ocansey",
+      "email": "evansdoe.ocansey@equivariantlabs.ai",
+      "vcs_username": "evansdoe",
+      "workspace_name": "Software Design",
+      "workspace_description": "Workspace for learning pythonic software design.",
+      "root_kind": "virtual",
+      "license": "MIT",
+      "copyright_year": "2026",
+      "python_version": "3.14",
+      "min_python_version": "3.14",
+      "uv_version": "latest",
+      "ci_platform": "github",
+      "type_checker": "ty",
+      "include_docs": "yes",
+      "include_precommit": "yes",
+      "include_devcontainer": "yes",
+      "include_danger": "yes",
+      "__workspace_slug": "software-design",
+      "__github_url": "https://github.com/evansdoe/software-design",
+      "__gitlab_url": "https://gitlab.com/evansdoe/software-design",
+      "__repo_url": "https://github.com/evansdoe/software-design",
+      "__root_module": "software_design",
+      "_template": "git@github.com:evansdoe/python-templates.git",
+      "_commit": "9caecd643cdffb7608a55987c93457fa5a591d34"
+    }
+  },
+  "directory": "python-workspace-template"
+}
