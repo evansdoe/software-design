@@ -1,0 +1,39 @@
+
+[project]
+name = "python-software-design"
+version = "0.1.0"
+description = "Practising Software Design for Python Programmers - Principles and patterns by Ronald Mak"
+readme = "README.md"
+requires-python = ">=3.14"
+authors = [{ name = "Evans Doe Ocansey", email = "evansdoe.ocansey@equivariantlabs.ai" }]
+dependencies = []
+
+[project.scripts]
+python-software-design = "python_software_design.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/python_software_design"]
+
+# Shared dev tooling (ruff, the type checker, poe) lives in the workspace root.
+# Only what this member needs to run its own tests is declared here, so that
+# `uv sync --package python-software-design --group test` works in isolation.
+[dependency-groups]
+test = ["pytest>=8.3", "pytest-cov>=6.0"]
+
+# Do NOT add a [tool.ruff] section here. Ruff treats the nearest config as
+# authoritative and does not merge it with the workspace root, so a section here
+# would silently drop every root rule for this member. To deviate, use a
+# ruff.toml alongside this file with `extend = "../../ruff.toml"`.
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config"
+
+[tool.coverage.run]
+source = ["src/python_software_design"]
+branch = true

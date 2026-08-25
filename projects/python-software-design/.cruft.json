@@ -1,0 +1,26 @@
+{
+  "template": "git@github.com:evansdoe/python-templates.git",
+  "commit": "9caecd643cdffb7608a55987c93457fa5a591d34",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "full_name": "Evans Doe Ocansey",
+      "email": "evansdoe.ocansey@equivariantlabs.ai",
+      "project_name": "python-software-design",
+      "project_description": "Practising Software Design for Python Programmers - Principles and patterns by Ronald Mak",
+      "version": "0.1.0",
+      "python_version": "3.14",
+      "min_python_version": "3.14",
+      "project_kind": "application",
+      "include_docs": "yes",
+      "custom_gitlab_pipeline": "no",
+      "member_dependencies": "",
+      "ruff_override": "no",
+      "__project_slug": "python-software-design",
+      "__module_name": "python_software_design",
+      "_template": "git@github.com:evansdoe/python-templates.git",
+      "_commit": "9caecd643cdffb7608a55987c93457fa5a591d34"
+    }
+  },
+  "directory": "python-workspace-member"
+}
