@@ -1,6 +1,6 @@
 {
   "template": "git@github.com:evansdoe/python-templates.git",
-  "commit": "9caecd643cdffb7608a55987c93457fa5a591d34",
+  "commit": "f39ab87b6146ac35f0d545f8c1d744b1b0153cb3",
   "checkout": null,
   "context": {
     "cookiecutter": {
@@ -27,7 +27,7 @@
       "__repo_url": "https://github.com/evansdoe/software-design",
       "__root_module": "software_design",
       "_template": "git@github.com:evansdoe/python-templates.git",
-      "_commit": "9caecd643cdffb7608a55987c93457fa5a591d34"
+      "_commit": "f39ab87b6146ac35f0d545f8c1d744b1b0153cb3"
     }
   },
   "directory": "python-workspace-template"

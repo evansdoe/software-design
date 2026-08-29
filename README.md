@@ -27,6 +27,12 @@ uv sync --all-packages --all-groups
 uv run pre-commit install
 ```
 
+### Danger.js (one-time setup)
+
+```bash
+cd scripts/danger && pnpm install   # commit the generated pnpm-lock.yaml
+```
+
 ## Adding a project
 
 Generate one with the member template — the glob in `[tool.uv.workspace]` picks
