@@ -17,6 +17,7 @@ dev = [
     { include-group = "test" },
     { include-group = "docs" },
     { include-group = "license" },
+    "ipython>=9.16.1",
     "poethepoet>=0.30",
     "pre-commit>=4.0",
 ]
